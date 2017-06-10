@@ -1,0 +1,16 @@
+{
+  "GitLab": {
+    "Token": "",
+    "SendTo": ""
+  },
+  "OsChina": {
+    "Password": "",
+    "SendTo": [ "" ]
+  },
+  "ServerJiang": {
+    "Token": ""
+  },
+  "Test": {
+    "test_config": "test config here"
+  }
+}
