@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,23 +54,27 @@ namespace MessagePusher.Core.Receiver
             return false;
         }
 
-        public Message Receive()
+        public List<Message> Receive()
         {
+            var list = new List<Message>();
             if (_eventName.Equals("ping", StringComparison.OrdinalIgnoreCase))
             {
-                return new Message
+                list.Add(new Message
                 {
                     Title = $"{_json["sender"]["login"]} pinged {_json["repository"]["name"]}",
                     Desc = "success"
-                };
+                });
+                return list;
             }
             if (_eventName.Equals("push", StringComparison.OrdinalIgnoreCase))
             {
-                return new Message
+                var forced = _json["forced"].ToObject<bool>() ? "forced" : "";
+                list.Add(new Message
                 {
-                    Title = $"{_json["sender"]["login"]} pushed a commit to {_json["repository"]["name"]}",
-                    Desc = $"{_json["commits"]["message"]}, {_json["commits"]["url"]}"
-                };
+                    Title = $"{_json["head_commit"]["committer"]["name"]} {forced} pushed a commit to {_json["repository"]["name"]}",
+                    Desc = $"{_json["head_commit"]["message"]}, {_json["head_commit"]["url"]}"
+                });
+                return list;
             }
             throw new NotImplementedException("Only push event implemented now.");
         }

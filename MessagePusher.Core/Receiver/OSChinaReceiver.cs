@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
@@ -24,14 +25,16 @@ namespace MessagePusher.Core.Receiver
             return Config["Password"].ToString().Trim().Equals(password);
         }
 
-        public Message Receive()
+        public List<Message> Receive()
         {
-            var message = new Message
+            return new List<Message>
             {
-                Title = $"{_json["user_name"]} pushed a commit to {_json["repository"]["name"]}",
-                Desc = $"{_json["commits"][0]["message"]}, {_json["commits"][0]["url"]}"
+                new Message
+                {
+                    Title = $"{_json["user_name"]} pushed a commit to {_json["repository"]["name"]}",
+                    Desc = $"{_json["commits"][0]["message"]}, {_json["commits"][0]["url"]}"
+                }
             };
-            return message;
         }
     }
 }

@@ -1,7 +1,7 @@
 MessagePusher
 ------------------
 
-an dotnet core application for webhooks
+a dotnet core application for webhooks
 
 
 ### install dotnet core environment
@@ -54,5 +54,20 @@ an dotnet core application for webhooks
             "Token": "",
             "SendTo": [ "Telegram", "ServerJiang" ]
         },
+        ```
+    
+- other usage   
+    斗鱼开播提醒
+    + config
+        ```json
+        "DouYu": {
+            "Rooms": [ "12345" ], 
+            "SendTo": [ "Telegram" ]
+        }
+        ```
+        需要提醒的房间 id 填入 `Rooms`
+    + 设置 cronjob
+        ```
+        */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
         ```
     

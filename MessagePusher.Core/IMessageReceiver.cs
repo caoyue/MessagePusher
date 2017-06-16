@@ -15,6 +15,6 @@ namespace MessagePusher.Core
 
         bool Verify();
 
-        Message Receive();
+        List<Message> Receive();
     }
 }
