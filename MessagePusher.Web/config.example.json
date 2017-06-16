@@ -1,16 +1,17 @@
 {
-  "GitLab": {
-    "Token": "",
-    "SendTo": ""
-  },
-  "OsChina": {
-    "Password": "",
-    "SendTo": [ "" ]
-  },
-  "ServerJiang": {
-    "Token": ""
-  },
-  "Test": {
-    "test_config": "test config here"
-  }
+    "GitHub": {
+        "Token": "",
+        "SendTo": [ "Telegram" ]
+    },
+    "OsChina": {
+        "Password": "",
+        "SendTo": [ "Telegram", "ServerJiang" ]
+    },
+    "ServerJiang": {
+        "Token": ""
+    },
+    "Telegram": {
+        "Token": "",
+        "ChatId": ""
+    }
 }

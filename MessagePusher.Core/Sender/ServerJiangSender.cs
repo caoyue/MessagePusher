@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using MessagePusher.Core.Models;
 
-namespace MessagePusher.Core.MessageSender
+namespace MessagePusher.Core.Sender
 {
     public class ServerJiangSender : MessageConfig, IMessageSender
     {
@@ -20,7 +20,7 @@ namespace MessagePusher.Core.MessageSender
                 Success = response.IsSuccessStatusCode,
                 Message = response.IsSuccessStatusCode
                     ? "OK"
-                    : $"Error: Http {response.StatusCode}"
+                    : $"Status: {response.StatusCode}, {await response.Content.ReadAsStringAsync()}"
             };
             return result;
         }

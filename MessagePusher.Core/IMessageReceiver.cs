@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core
 {
@@ -11,8 +11,10 @@ namespace MessagePusher.Core
 
         List<string> SendTo { get; }
 
-        bool Verify(IQueryCollection query, IHeaderDictionary headers, JObject json);
+        Task Init(HttpRequest request);
 
-        Result<Message> Receive(IQueryCollection query, IHeaderDictionary headers, JObject json);
+        bool Verify();
+
+        Message Receive();
     }
 }

@@ -5,7 +5,6 @@ using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Web.Controllers
 {
@@ -25,37 +24,39 @@ namespace MessagePusher.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Go(string resource)
         {
-            return await Action(resource, "Get", Request.Query, Request.Headers, null);
+            return await Action(resource, Request);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Go(string resource, [FromBody]dynamic requestData)
+        [ActionName("Go")]
+        public async Task<IActionResult> GoPost(string resource)
         {
-            return await Action(resource, "Post", Request.Query, Request.Headers, requestData);
+            return await Action(resource, Request);
         }
 
-        private async Task<IActionResult> Action(string resource, string method,
-            IQueryCollection query, IHeaderDictionary headers, JObject json)
+
+        private async Task<IActionResult> Action(string resource, HttpRequest request)
         {
             var result = new Result { Success = false };
-            var receiver = Bind.GetReceiver(resource, method, _receivers);
+            var receiver = Bind.GetReceiver(resource, request.Method, _receivers);
             if (receiver == null)
             {
                 result.Message = "receiver does not exists!";
                 return NotFound(result);
             }
+            await receiver.Init(request);
 
-            if (!receiver.Verify(query, headers, json))
+            if (!receiver.Verify())
             {
-                result.Message = "verify request failed!";
+                result.Message = "Invalid request.";
                 return StatusCode(StatusCodes.Status403Forbidden, result);
             }
 
-            var message = receiver.Receive(query, headers, json);
+            var message = receiver.Receive();
             var senders = Bind.GetSenders(receiver.SendTo, _senders);
             foreach (var sender in senders)
             {
-                var r = await sender.Send(message.Data);
+                var r = await sender.Send(message);
                 if (r.Success)
                 {
                     _logger.LogInformation($"[{resource}]send to [{sender.Name}] success!");

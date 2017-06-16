@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MessagePusher.Core.MessageReceiver;
 
 namespace MessagePusher.Core.Models
 {
@@ -28,9 +27,6 @@ namespace MessagePusher.Core.Models
                 }
             }
             return result;
-            //return sendTo.Select(st => senders
-            //    .FirstOrDefault(t => t.Name.Equals(st, StringComparison.OrdinalIgnoreCase)))
-            //.Where(temp => temp != null);
         }
 
         public static IEnumerable<IMessageReceiver> GetAllReceivers()
@@ -45,10 +41,6 @@ namespace MessagePusher.Core.Models
 
         private static IEnumerable<T> GetAllImps<T>() where T : class
         {
-            var a = typeof(IMessageReceiver).GetTypeInfo()
-                .Assembly;
-            var b = a.GetTypes();
-            var c = typeof(IMessageReceiver).IsAssignableFrom(typeof(OsChinaReceiver));
             return typeof(T).GetTypeInfo()
                 .Assembly.GetTypes()
                 .Where(t => typeof(T).IsAssignableFrom(t) && t.GetTypeInfo().IsClass)
