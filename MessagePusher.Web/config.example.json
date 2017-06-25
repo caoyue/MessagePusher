@@ -7,6 +7,11 @@
         "Password": "",
         "SendTo": [ "Telegram", "ServerJiang" ]
     },
+    "Twitch": {
+        "Channels": [ "" ],
+        "ClientId": "",
+        "SendTo": [ "Telegram" ]
+    },
     "DouYu": {
         "Rooms": [ "" ],
         "SendTo": [ "Telegram" ]

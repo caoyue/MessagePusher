@@ -1,4 +1,4 @@
-﻿namespace MessagePusher.Core
+namespace MessagePusher.Core
 {
     public interface IMessager
     {

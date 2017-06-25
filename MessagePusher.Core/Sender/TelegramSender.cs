@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +9,8 @@ namespace MessagePusher.Core.Sender
 {
     public class TelegramSender : MessageConfig, IMessageSender
     {
+        private static readonly HttpClient Client = new HttpClient();
+
         public async Task<Result> Send(List<Message> messages)
         {
             var token = Config["Token"].ToString();
@@ -28,8 +30,7 @@ namespace MessagePusher.Core.Sender
             {
                 var desc = string.IsNullOrWhiteSpace(message.Desc) ? "" : $": {message.Desc}";
                 var mStr = WebUtility.HtmlEncode($"{ message.Title}{desc}");
-                var response = await new HttpClient()
-                    .GetAsync($"https://api.telegram.org/bot{token}/sendMessage?" +
+                var response = await Client.GetAsync($"https://api.telegram.org/bot{token}/sendMessage?" +
                               $"chat_id={chatId}&text={mStr}");
                 if (!response.IsSuccessStatusCode)
                 {

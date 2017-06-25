@@ -1,4 +1,4 @@
-﻿using MessagePusher.Core.Models;
+using MessagePusher.Core.Models;
 using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core

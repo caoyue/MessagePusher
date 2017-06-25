@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +17,8 @@ namespace MessagePusher.Core.Receiver
         private readonly List<Message> _messages = new List<Message>();
         private static readonly Dictionary<string, DateTime> DownTime = new Dictionary<string, DateTime>();
 
+        private static readonly HttpClient Client = new HttpClient();
+
         public async Task Init(HttpRequest request)
         {
             var now = DateTime.Now;
@@ -26,7 +28,7 @@ namespace MessagePusher.Core.Receiver
                 var success = true;
                 try
                 {
-                    r = await new HttpClient().GetAsync(site);
+                    r = await Client.GetAsync(site);
                 }
                 catch (Exception)
                 {

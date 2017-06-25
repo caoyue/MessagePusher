@@ -1,4 +1,4 @@
-﻿namespace MessagePusher.Core.Models
+namespace MessagePusher.Core.Models
 {
     public class Message
     {

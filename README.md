@@ -29,19 +29,23 @@ a dotnet core application for webhooks
     docker run --name message_push_server -p 8001:8001 -v /home/MessagePusher/publish:/app -d message_pusher
     ```
     
-### config
+### usage
 - set message senders
     + edit `/publish/config.json`, add:
         ```json
         "ServerJiang": {
             "Token": "{your token}"
-        },
+        }
+        ```
+        
+        ```
         "Telegram": {
-            "Token": "{your token}",
+            "Token": "{your bot token}",
             "ChatId": "{chat id}"
         }
         ```
-- set web hook  
+        💡 follow [this link](https://core.telegram.org/bots/api#getting-updates) to get your chat id
+- web hook  
     e.g. Github
     + Payload URL
        `http://{your_host}:8001/api/github`
@@ -51,7 +55,7 @@ a dotnet core application for webhooks
         edit `/publish/config.json`, add:
         ```json
         "GitHub": {
-            "Token": "",
+            "Token": "{your webhook secret token}",
             "SendTo": [ "Telegram", "ServerJiang" ]
         },
         ```
@@ -59,7 +63,7 @@ a dotnet core application for webhooks
     + config
         ```json
         "SiteMonitor": {
-            "Sites": [ "https://i.caoyue.me/" ],
+            "Sites": [ "{your site, e.g. https://i.caoyue.me/}" ],
             "SendTo": [ "Telegram" ]
         },
         ```
@@ -67,12 +71,25 @@ a dotnet core application for webhooks
         ```
         */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
         ```
-    
-- 斗鱼开播提醒
+- twitch stream notification
+    + config
+        ```json
+        "Twitch": {
+            "Channels": [ "{channel id}" ],
+            "ClientId": "{your client id}",
+            "SendTo": [ "Telegram" ]
+        }
+        ```
+        💡 To get a client ID, register a developer application on the [connections page](https://www.twitch.tv/settings/connections) of your Twitch account.
+    + cronjob
+        ```
+        */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
+        ```   
+- 斗鱼开播提醒  
     + config
         ```json
         "DouYu": {
-            "Rooms": [ "12345" ], 
+            "Rooms": [ "{room id}" ], 
             "SendTo": [ "Telegram" ]
         }
         ```

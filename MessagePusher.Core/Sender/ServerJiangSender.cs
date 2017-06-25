@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +9,8 @@ namespace MessagePusher.Core.Sender
 {
     public class ServerJiangSender : MessageConfig, IMessageSender
     {
+        private static readonly HttpClient Client = new HttpClient();
+
         public async Task<Result> Send(List<Message> messages)
         {
             var token = Config["Token"].ToString();
@@ -22,8 +24,7 @@ namespace MessagePusher.Core.Sender
             {
                 foreach (var message in messages)
                 {
-                    var response = await new HttpClient()
-                        .GetAsync($"http://sc.ftqq.com/{token}.send?text=" +
+                    var response = await Client.GetAsync($"http://sc.ftqq.com/{token}.send?text=" +
                                   $"{WebUtility.UrlEncode(message.Title)}&desp={WebUtility.UrlEncode(message.Desc)}");
 
                     if (!response.IsSuccessStatusCode)

@@ -1,18 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace MessagePusher.Core.Receiver
 {
-    public class DouYuReceiver : MessageReceiver, IMessageReceiver
+    public class TwitchReceiver : MessageReceiver, IMessageReceiver
     {
-        private const string DouYuAPi = "http://open.douyucdn.cn/api/RoomApi/room/{0}";
+        private const string TwitchApi = "https://api.twitch.tv/kraken/streams/{0}";
         private static readonly List<string> OnlineList = new List<string>();
 
-        private List<string> _roomIdList = new List<string>();
+        private List<string> _channelList = new List<string>();
         private readonly List<Message> _messages = new List<Message>();
 
         private static readonly HttpClient Client = new HttpClient();
@@ -21,33 +23,34 @@ namespace MessagePusher.Core.Receiver
 
         public async Task Init(HttpRequest request)
         {
-            _roomIdList = Config["Rooms"].ToObject<List<string>>();
-            if (_roomIdList != null && _roomIdList.Any())
+            Client.DefaultRequestHeaders.Add("Client-ID", Config["ClientId"].ToString());
+            _channelList = Config["Channels"].ToObject<List<string>>();
+            if (_channelList != null && _channelList.Any())
             {
-                foreach (var rId in _roomIdList)
+                foreach (var cId in _channelList)
                 {
-                    var response = await Client.GetAsync(string.Format(DouYuAPi, rId));
+                    var response = await Client.GetAsync(string.Format(TwitchApi, cId));
                     if (response.IsSuccessStatusCode)
                     {
                         var responseStr = await response.Content.ReadAsStringAsync();
                         var json = responseStr.ToJson();
-                        if (json["data"]["room_status"].ToString() == "1")
+                        if (json["stream"] != null)
                         {
 
-                            if (!OnlineList.Contains(rId))
+                            if (!OnlineList.Contains(cId))
                             {
                                 var message = new Message
                                 {
-                                    Title = $"{json["data"]["owner_name"]} start streaming",
-                                    Desc = $"{json["data"]["room_name"]}"
+                                    Title = $"{cId}({json["stream"]["channel"]["display_name"]}) start streaming",
+                                    Desc = $"{json["stream"]["channel"]["status"]}, {json["stream"]["channel"]["url"]}"
                                 };
                                 _messages.Add(message);
-                                OnlineList.Add(rId);
+                                OnlineList.Add(cId);
                             }
                         }
                         else
                         {
-                            OnlineList.Remove(rId);
+                            OnlineList.Remove(cId);
                         }
                     }
                 }
