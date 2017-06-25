@@ -5,12 +5,8 @@ namespace MessagePusher.Core
 {
     public abstract class MessageConfig
     {
-        public virtual JToken Config
-        {
-            get {
-                var name = GetType().Name.Replace("Receiver", "").Replace("Sender", "");
-                return ConfigLoader.Config[name];
-            }
-        }
+        public virtual JToken Config => ConfigLoader.Config[Name];
+
+        public virtual string Name => GetType().Name.Replace("Receiver", "").Replace("Sender", "");
     }
 }

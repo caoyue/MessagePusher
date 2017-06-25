@@ -18,8 +18,6 @@ namespace MessagePusher.Core.Receiver
         private string _signature;
         private JObject _json;
 
-        public string Name => "GitHub";
-
         public string Method => "Post";
 
         public async Task Init(HttpRequest request)

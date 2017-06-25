@@ -9,8 +9,6 @@ namespace MessagePusher.Core.Sender
 {
     public class ServerJiangSender : MessageConfig, IMessageSender
     {
-        public string Name => "ServerJiang";
-
         public async Task<Result> Send(List<Message> messages)
         {
             var token = Config["Token"].ToString();

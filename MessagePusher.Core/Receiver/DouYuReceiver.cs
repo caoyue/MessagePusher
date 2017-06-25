@@ -15,7 +15,6 @@ namespace MessagePusher.Core.Receiver
         private List<string> _roomIdList = new List<string>();
         private readonly List<Message> _messages = new List<Message>();
 
-        public string Name => "DouYu";
         public string Method => "Get";
 
         public async Task Init(HttpRequest request)
@@ -38,7 +37,7 @@ namespace MessagePusher.Core.Receiver
                             {
                                 var message = new Message
                                 {
-                                    Title = $"{json["data"]["owner_name"]} start streaming!",
+                                    Title = $"{json["data"]["owner_name"]} start streaming",
                                     Desc = $"{json["data"]["room_name"]}"
                                 };
                                 _messages.Add(message);

@@ -10,8 +10,6 @@ namespace MessagePusher.Core.Receiver
     {
         private JObject _json;
 
-        public string Name => "OsChina";
-
         public string Method => "Post";
 
         public async Task Init(HttpRequest request)
@@ -27,14 +25,23 @@ namespace MessagePusher.Core.Receiver
 
         public List<Message> Receive()
         {
-            return new List<Message>
+            var messages = new List<Message>();
+            if (_json["hook_name"].ToString().Equals("push_hooks"))
             {
-                new Message
+                messages.Add(new Message
                 {
                     Title = $"{_json["user_name"]} pushed a commit to {_json["repository"]["name"]}",
                     Desc = $"{_json["commits"][0]["message"]}, {_json["commits"][0]["url"]}"
-                }
-            };
+                });
+            }
+            else if (_json["hook_name"].ToString().Equals("merge_request_hooks"))
+            {
+                messages.Add(new Message
+                {
+                    Title = $"{_json["author"]} send a pull request"
+                });
+            }
+            return messages;
         }
     }
 }

@@ -55,9 +55,20 @@ a dotnet core application for webhooks
             "SendTo": [ "Telegram", "ServerJiang" ]
         },
         ```
+- simple site monitor service
+    + config
+        ```json
+        "SiteMonitor": {
+            "Sites": [ "https://i.caoyue.me/" ],
+            "SendTo": [ "Telegram" ]
+        },
+        ```
+    + cronjob
+        ```
+        */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
+        ```
     
-- other usage   
-    斗鱼开播提醒
+- 斗鱼开播提醒
     + config
         ```json
         "DouYu": {

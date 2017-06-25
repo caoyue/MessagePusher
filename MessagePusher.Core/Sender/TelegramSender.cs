@@ -9,8 +9,6 @@ namespace MessagePusher.Core.Sender
 {
     public class TelegramSender : MessageConfig, IMessageSender
     {
-        public string Name => "Telegram";
-
         public async Task<Result> Send(List<Message> messages)
         {
             var token = Config["Token"].ToString();
@@ -21,19 +19,22 @@ namespace MessagePusher.Core.Sender
                 Message = "Success"
             };
 
-            if (messages != null && messages.Any())
+            if (messages == null || !messages.Any())
             {
-                foreach (var message in messages)
+                return result;
+            }
+
+            foreach (var message in messages)
+            {
+                var desc = string.IsNullOrWhiteSpace(message.Desc) ? "" : $": {message.Desc}";
+                var mStr = WebUtility.HtmlEncode($"{ message.Title}{desc}");
+                var response = await new HttpClient()
+                    .GetAsync($"https://api.telegram.org/bot{token}/sendMessage?" +
+                              $"chat_id={chatId}&text={mStr}");
+                if (!response.IsSuccessStatusCode)
                 {
-                    var mStr = WebUtility.HtmlEncode($"{ message.Title}: { message.Desc}");
-                    var response = await new HttpClient()
-                        .GetAsync($"https://api.telegram.org/bot{token}/sendMessage?" +
-                                  $"chat_id={chatId}&text={mStr}");
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        result.Success = false;
-                        result.Message = $"Status: {response.StatusCode}, {await response.Content.ReadAsStringAsync()}";
-                    }
+                    result.Success = false;
+                    result.Message = $"Status: {response.StatusCode}, {await response.Content.ReadAsStringAsync()}";
                 }
             }
             return result;

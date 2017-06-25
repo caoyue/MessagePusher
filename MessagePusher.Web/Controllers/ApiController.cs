@@ -10,14 +10,12 @@ namespace MessagePusher.Web.Controllers
 {
     public class ApiController : Controller
     {
-        private readonly IEnumerable<IMessageReceiver> _receivers;
-        private readonly IEnumerable<IMessageSender> _senders;
+        private static readonly IEnumerable<IMessageReceiver> Receivers = Bind.GetAllReceivers();
+        private static readonly IEnumerable<IMessageSender> Senders = Bind.GetAllSenders();
         private readonly ILogger _logger;
 
         public ApiController(ILogger<ApiController> logger)
         {
-            _receivers = Bind.GetAllReceivers();
-            _senders = Bind.GetAllSenders();
             _logger = logger;
         }
 
@@ -38,7 +36,7 @@ namespace MessagePusher.Web.Controllers
         private async Task<IActionResult> Action(string resource, HttpRequest request)
         {
             var result = new Result { Success = false };
-            var receiver = Bind.GetReceiver(resource, request.Method, _receivers);
+            var receiver = Bind.GetReceiver(resource, request.Method, Receivers);
             if (receiver == null)
             {
                 result.Message = "receiver does not exists!";
@@ -48,12 +46,12 @@ namespace MessagePusher.Web.Controllers
 
             if (!receiver.Verify())
             {
-                result.Message = "Invalid request.";
+                result.Message = "Invalid request or nothing to push.";
                 return StatusCode(StatusCodes.Status403Forbidden, result);
             }
 
             var message = receiver.Receive();
-            var senders = Bind.GetSenders(receiver.SendTo, _senders);
+            var senders = Bind.GetSenders(receiver.SendTo, Senders);
             foreach (var sender in senders)
             {
                 var r = await sender.Send(message);

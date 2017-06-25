@@ -7,6 +7,14 @@
         "Password": "",
         "SendTo": [ "Telegram", "ServerJiang" ]
     },
+    "DouYu": {
+        "Rooms": [ "" ],
+        "SendTo": [ "Telegram" ]
+    },
+    "SiteMonitor": {
+        "Sites": [ "" ],
+        "SendTo": [ "Telegram" ]
+    },
     "ServerJiang": {
         "Token": ""
     },
