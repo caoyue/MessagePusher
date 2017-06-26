@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MessagePusher.Core.Extensions;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core.Receiver
 {
@@ -14,42 +17,50 @@ namespace MessagePusher.Core.Receiver
 
         private List<string> _roomIdList = new List<string>();
         private readonly List<Message> _messages = new List<Message>();
+        private JToken _config;
 
         private static readonly HttpClient Client = new HttpClient();
 
         public string Method => "Get";
 
-        public async Task Init(HttpRequest request)
-        {
-            _roomIdList = Config["Rooms"].ToObject<List<string>>();
-            if (_roomIdList != null && _roomIdList.Any())
-            {
-                foreach (var rId in _roomIdList)
-                {
-                    var response = await Client.GetAsync(string.Format(DouYuAPi, rId));
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseStr = await response.Content.ReadAsStringAsync();
-                        var json = responseStr.ToJson();
-                        if (json["data"]["room_status"].ToString() == "1")
-                        {
+        public List<string> SendTo => _config["SendTo"].ToObject<List<string>>();
 
-                            if (!OnlineList.Contains(rId))
-                            {
-                                var message = new Message
-                                {
-                                    Title = $"{json["data"]["owner_name"]} start streaming",
-                                    Desc = $"{json["data"]["room_name"]}"
-                                };
-                                _messages.Add(message);
-                                OnlineList.Add(rId);
-                            }
-                        }
-                        else
+        public async Task Init(HttpRequest request, JToken config)
+        {
+            _config = config;
+            _roomIdList = _config["Rooms"].ToObject<List<string>>();
+
+            if (_roomIdList == null || !_roomIdList.Any())
+            {
+                return;
+            }
+
+            foreach (var rId in _roomIdList)
+            {
+                var response = await Client.GetAsync(string.Format(DouYuAPi, rId));
+                if (!response.IsSuccessStatusCode)
+                {
+                    continue;
+                }
+
+                var responseStr = await response.Content.ReadAsStringAsync();
+                var json = responseStr.ToJson();
+                if (json["data"]["room_status"].ToString() == "1")
+                {
+                    if (!OnlineList.Contains(rId))
+                    {
+                        var message = new Message
                         {
-                            OnlineList.Remove(rId);
-                        }
+                            Title = $"{json["data"]["owner_name"]} start streaming",
+                            Desc = $"{json["data"]["room_name"]}"
+                        };
+                        _messages.Add(message);
+                        OnlineList.Add(rId);
                     }
+                }
+                else
+                {
+                    OnlineList.Remove(rId);
                 }
             }
         }
@@ -62,6 +73,11 @@ namespace MessagePusher.Core.Receiver
         public List<Message> Receive()
         {
             return _messages;
+        }
+
+        public void Config(JToken config)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -14,19 +14,10 @@ namespace MessagePusher.Core.Models
                 && t.Method.Equals(method, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IEnumerable<IMessageSender> GetSenders(List<string> sendTo,
+        public static IMessageSender GetSender(string senderType,
             IEnumerable<IMessageSender> senders)
         {
-            var result = new List<IMessageSender>();
-            foreach (var st in sendTo)
-            {
-                var temp = senders.FirstOrDefault(t => t.Name.Equals(st, StringComparison.OrdinalIgnoreCase));
-                if (temp != null)
-                {
-                    result.Add(temp);
-                }
-            }
-            return result;
+            return senders.FirstOrDefault(t => t.Name.Equals(senderType, StringComparison.OrdinalIgnoreCase));
         }
 
         public static IEnumerable<IMessageReceiver> GetAllReceivers()

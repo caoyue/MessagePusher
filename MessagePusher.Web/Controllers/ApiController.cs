@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MessagePusher.Core;
@@ -13,6 +14,7 @@ namespace MessagePusher.Web.Controllers
         private static readonly IEnumerable<IMessageReceiver> Receivers = Bind.GetAllReceivers();
         private static readonly IEnumerable<IMessageSender> Senders = Bind.GetAllSenders();
         private readonly ILogger _logger;
+
 
         public ApiController(ILogger<ApiController> logger)
         {
@@ -32,17 +34,34 @@ namespace MessagePusher.Web.Controllers
             return await Action(resource, Request);
         }
 
+        public ActionResult Reload()
+        {
+            var result = new Result { Success = true, Message = "reload config success" };
+            try
+            {
+                ConfigLoader.Reload();
+            }
+            catch (Exception e)
+            {
+                result.Success = false;
+                result.Message = e.Message;
+            }
+            return Json(result);
+        }
+
 
         private async Task<IActionResult> Action(string resource, HttpRequest request)
         {
             var result = new Result { Success = false };
+            var config = ConfigLoader.Config;
+
             var receiver = Bind.GetReceiver(resource, request.Method, Receivers);
             if (receiver == null)
             {
                 result.Message = "receiver does not exists!";
                 return NotFound(result);
             }
-            await receiver.Init(request);
+            await receiver.Init(request, config["Receiver"][receiver.Name]);
 
             if (!receiver.Verify())
             {
@@ -51,9 +70,10 @@ namespace MessagePusher.Web.Controllers
             }
 
             var message = receiver.Receive();
-            var senders = Bind.GetSenders(receiver.SendTo, Senders);
-            foreach (var sender in senders)
+            foreach (var to in receiver.SendTo)
             {
+                var sender = Bind.GetSender(config["Sender"][to]["Type"].ToString(), Senders);
+                sender.Config(config["Sender"][to]);
                 var r = await sender.Send(message);
                 if (r.Success)
                 {

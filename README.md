@@ -30,21 +30,34 @@ a dotnet core application for webhooks
     ```
     
 ### usage
+- reload config file without restart app
+    request `http://{your_host}:8001/api/reload`
 - set message senders
     + edit `/publish/config.json`, add:
         ```json
-        "ServerJiang": {
-            "Token": "{your token}"
+        "Sender": {
+            "{your sender name}": {
+                "Type": "{required, sender type}",
+                "{xxx}": "{sender config field}"
+            }
         }
         ```
+        e.g.
+        ```json
+        "Sender": {
+            "SendToAlice": {
+                "Type": "ServerJiang",
+                "Token": ""
+            },
+            "SendToBob": {
+                "Type": "Telegram",
+                "Token": "",
+                "ChatId": ""
+            }
+        }
+        ```
+        💡 telegram users: follow [this link](https://core.telegram.org/bots/api#getting-updates) to get your chat id
         
-        ```
-        "Telegram": {
-            "Token": "{your bot token}",
-            "ChatId": "{chat id}"
-        }
-        ```
-        💡 follow [this link](https://core.telegram.org/bots/api#getting-updates) to get your chat id
 - web hook  
     e.g. Github
     + Payload URL
@@ -54,18 +67,22 @@ a dotnet core application for webhooks
     + set config
         edit `/publish/config.json`, add:
         ```json
-        "GitHub": {
-            "Token": "{your webhook secret token}",
-            "SendTo": [ "Telegram", "ServerJiang" ]
-        },
+        "Receiver": {
+            "GitHub": {
+                "Token": "",
+                "SendTo": [ "your sender name" ]
+            }
+        }
         ```
 - simple site monitor service
     + config
         ```json
-        "SiteMonitor": {
-            "Sites": [ "{your site, e.g. https://i.caoyue.me/}" ],
-            "SendTo": [ "Telegram" ]
-        },
+        "Receiver": {
+            "SiteMonitor": {
+                "Sites": [ "{your site, e.g. https://i.caoyue.me/}" ],
+                "SendTo": [ "{your sender name}" ]
+            }
+        }
         ```
     + cronjob
         ```
@@ -74,10 +91,12 @@ a dotnet core application for webhooks
 - twitch stream notification
     + config
         ```json
-        "Twitch": {
-            "Channels": [ "{channel id}" ],
-            "ClientId": "{your client id}",
-            "SendTo": [ "Telegram" ]
+        "Receiver": {
+            "Twitch": {
+                "Channels": [ "{twitch channel id}" ],
+                "ClientId": "{your client id}",
+                "SendTo": [ "{your sender name}" ]
+            }
         }
         ```
         💡 To get a client ID, register a developer application on the [connections page](https://www.twitch.tv/settings/connections) of your Twitch account.
@@ -88,9 +107,11 @@ a dotnet core application for webhooks
 - 斗鱼开播提醒  
     + config
         ```json
-        "DouYu": {
-            "Rooms": [ "{room id}" ], 
-            "SendTo": [ "Telegram" ]
+        "Receiver": {
+            "DouYu": {
+                "Rooms": [ "{douyu room id}" ], 
+                "SendTo": [ "{your sender name}" ]
+            }
         }
         ```
         需要提醒的房间 id 填入 `Rooms`
@@ -98,4 +119,3 @@ a dotnet core application for webhooks
         ```
         */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
         ```
-    

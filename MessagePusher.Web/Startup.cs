@@ -43,6 +43,10 @@ namespace MessagePusher.Web
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "reload",
+                    template: "api/reload",
+                    defaults: new { controller = "Api", action = "Reload" });
+                routes.MapRoute(
                     name: "default",
                     template: "api/{resource}",
                     defaults: new { controller = "Api", action = "Go" });

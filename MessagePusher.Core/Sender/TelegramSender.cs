@@ -1,25 +1,42 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MessagePusher.Core.Extensions;
 using MessagePusher.Core.Models;
+using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core.Sender
 {
     public class TelegramSender : MessageConfig, IMessageSender
     {
         private static readonly HttpClient Client = new HttpClient();
+        private string _token;
+        private string _chatId;
+
+        public void Config(JToken config)
+        {
+            _token = config["Token"].ToString();
+            _chatId = config["ChatId"].ToString();
+        }
 
         public async Task<Result> Send(List<Message> messages)
         {
-            var token = Config["Token"].ToString();
-            var chatId = Config["ChatId"].ToString();
             var result = new Result
             {
                 Success = true,
                 Message = "Success"
             };
+
+            if (_token.IsNullOrWhiteSpace() || _chatId.IsNullOrWhiteSpace())
+            {
+                result.Success = false;
+                result.Message = "config not correct";
+                return result;
+            }
+
 
             if (messages == null || !messages.Any())
             {
@@ -30,8 +47,8 @@ namespace MessagePusher.Core.Sender
             {
                 var desc = string.IsNullOrWhiteSpace(message.Desc) ? "" : $": {message.Desc}";
                 var mStr = WebUtility.HtmlEncode($"{ message.Title}{desc}");
-                var response = await Client.GetAsync($"https://api.telegram.org/bot{token}/sendMessage?" +
-                              $"chat_id={chatId}&text={mStr}");
+                var response = await Client.GetAsync($"https://api.telegram.org/bot{_token}/sendMessage?" +
+                              $"chat_id={_chatId}&text={mStr}");
                 if (!response.IsSuccessStatusCode)
                 {
                     result.Success = false;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using MessagePusher.Core.Extensions;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
@@ -17,11 +18,15 @@ namespace MessagePusher.Core.Receiver
         private string _eventName;
         private string _signature;
         private JObject _json;
+        private JToken _config;
 
         public string Method => "Post";
 
-        public async Task Init(HttpRequest request)
+        public List<string> SendTo => _config["SendTo"].ToObject<List<string>>();
+
+        public async Task Init(HttpRequest request, JToken config)
         {
+            _config = config;
             _payload = await request.ReadBodyAsync();
             _eventName = request.Headers["X-GitHub-Event"];
             _signature = request.Headers["X-Hub-Signature"];
@@ -34,7 +39,7 @@ namespace MessagePusher.Core.Receiver
             if (_signature.StartsWith(Sha1Prefix, StringComparison.OrdinalIgnoreCase))
             {
                 var signature = _signature.Substring(Sha1Prefix.Length);
-                var secret = Encoding.ASCII.GetBytes(Config["Token"].ToString());
+                var secret = Encoding.ASCII.GetBytes(_config["Token"].ToString());
                 var payloadBytes = Encoding.ASCII.GetBytes(_payload);
 
                 using (var hmSha1 = new HMACSHA1(secret))
@@ -85,6 +90,11 @@ namespace MessagePusher.Core.Receiver
                 builder.AppendFormat("{0:x2}", b);
             }
             return builder.ToString();
+        }
+
+        public void Config(JToken config)
+        {
+            throw new NotImplementedException();
         }
     }
 }

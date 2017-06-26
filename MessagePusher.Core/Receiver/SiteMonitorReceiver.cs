@@ -5,22 +5,33 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using MessagePusher.Core.Models;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core.Receiver
 {
     public class SiteMonitorReceiver : MessageReceiver, IMessageReceiver
     {
         public string Method => "Get";
+        public List<string> SendTo => _config["SendTo"].ToObject<List<string>>();
 
-        private List<string> Sites => Config["Sites"].ToObject<List<string>>();
+        private List<string> Sites => _config["Sites"].ToObject<List<string>>();
 
         private readonly List<Message> _messages = new List<Message>();
         private static readonly Dictionary<string, DateTime> DownTime = new Dictionary<string, DateTime>();
 
+        private JToken _config;
+
         private static readonly HttpClient Client = new HttpClient();
 
-        public async Task Init(HttpRequest request)
+        public List<Message> Receive()
         {
+            return _messages;
+        }
+
+        public async Task Init(HttpRequest request, JToken config)
+        {
+            _config = config;
+
             var now = DateTime.Now;
             foreach (var site in Sites)
             {
@@ -34,7 +45,7 @@ namespace MessagePusher.Core.Receiver
                 {
                     success = false;
                 }
-                
+
                 if (success && r != null && r.IsSuccessStatusCode)
                 {
                     if (DownTime.ContainsKey(site))
@@ -60,11 +71,6 @@ namespace MessagePusher.Core.Receiver
                     }
                 }
             }
-        }
-
-        public List<Message> Receive()
-        {
-            return _messages;
         }
 
         public bool Verify()

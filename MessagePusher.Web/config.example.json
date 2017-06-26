@@ -1,30 +1,41 @@
 {
-    "GitHub": {
-        "Token": "",
-        "SendTo": [ "Telegram" ]
+    "Receiver": {
+        "GitHub": {
+            "Token": "",
+            "SendTo": [ "SendToAlice" ]
+        },
+        "OsChina": {
+            "Password": "",
+            "SendTo": [ "SendToAlice", "SendToBob" ]
+        },
+        "Twitch": {
+            "Channels": [ "" ],
+            "ClientId": "",
+            "SendTo": [ "SendToBob" ]
+        },
+        "DouYu": {
+            "Rooms": [ "" ],
+            "SendTo": [ "SendToAlice", "SendToBob" ]
+        },
+        "SiteMonitor": {
+            "Sites": [ "https://i.caoyue.me/" ],
+            "SendTo": [ "SendToAlice" ]
+        }
     },
-    "OsChina": {
-        "Password": "",
-        "SendTo": [ "Telegram", "ServerJiang" ]
-    },
-    "Twitch": {
-        "Channels": [ "" ],
-        "ClientId": "",
-        "SendTo": [ "Telegram" ]
-    },
-    "DouYu": {
-        "Rooms": [ "" ],
-        "SendTo": [ "Telegram" ]
-    },
-    "SiteMonitor": {
-        "Sites": [ "" ],
-        "SendTo": [ "Telegram" ]
-    },
-    "ServerJiang": {
-        "Token": ""
-    },
-    "Telegram": {
-        "Token": "",
-        "ChatId": ""
+    "Sender": {
+        "SendToAlice": {
+            "Type": "ServerJiang",
+            "Token": ""
+        },
+        "SendToBob": {
+            "Type": "Telegram",
+            "Token": "",
+            "ChatId": ""
+        },
+        "SendToCarol": {
+            "Type": "Telegram",
+            "Token": "",
+            "ChatId": ""
+        }
     }
 }

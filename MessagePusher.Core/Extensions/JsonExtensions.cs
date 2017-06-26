@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MessagePusher.Core.Models
+namespace MessagePusher.Core.Extensions
 {
     public static class JsonExtensions
     {

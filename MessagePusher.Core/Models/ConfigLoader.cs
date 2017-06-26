@@ -6,12 +6,19 @@ namespace MessagePusher.Core.Models
 {
     public static class ConfigLoader
     {
-        public static readonly JObject Config = Load();
+        public static JObject Config = Load();
+
+        public static void Reload()
+        {
+            Config = Load();
+        }
 
         private static JObject Load()
         {
             var str = File.ReadAllText("config.json");
             return JsonConvert.DeserializeObject(str) as JObject;
         }
+
+
     }
 }
