@@ -35,7 +35,7 @@ namespace MessagePusher.Core.Receiver
             {
                 messages.Add(new Message
                 {
-                    Title = $"{_json["user_name"]} pushed a commit to {_json["repository"]["name"]}",
+                    Title = $"{_json["user_name"]} pushed a commit to {_json["repository"]["name"]}/{_json["ref"].ToString().Replace("refs/heads/", "")}",
                     Desc = $"{_json["commits"][0]["message"]}, {_json["commits"][0]["url"]}"
                 });
             }
@@ -44,6 +44,14 @@ namespace MessagePusher.Core.Receiver
                 messages.Add(new Message
                 {
                     Title = $"{_json["author"]} send a pull request"
+                });
+            }
+            else if (_json["hook_name"].ToString().Equals("issue_hooks"))
+            {
+                messages.Add(new Message
+                {
+                    Title = $"{_json["user"]["username"]} {_json["state"]} an issue, assignee: {_json["assignee"]["user_name"]}",
+                    Desc = $"{_json["title"]}, {_json["description"]}, {_json["project"]["url"]}/issues/{_json["iid"]}"
                 });
             }
             return messages;

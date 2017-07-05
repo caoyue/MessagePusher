@@ -53,10 +53,15 @@ a dotnet core application for webhooks
                 "Type": "Telegram",
                 "Token": "",
                 "ChatId": ""
+            },
+            "SendToCarol": {
+                "Type": "Slack",
+                "Webhook": "https://hooks.slack.com/services/{{service token}}"
             }
         }
         ```
-        💡 telegram users: follow [this link](https://core.telegram.org/bots/api#getting-updates) to get your chat id
+        💡 telegram: follow [this link](https://core.telegram.org/bots/api#getting-updates) to get your chat id  
+        💡 slack: follow [this link](https://my.slack.com/services/new/incoming-webhook/) to set your incoming webhooks
         
 - web hook  
     e.g. Github

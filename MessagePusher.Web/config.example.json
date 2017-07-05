@@ -36,6 +36,10 @@
             "Type": "Telegram",
             "Token": "",
             "ChatId": ""
+        },
+        "SendToSlack": {
+            "Type": "Slack",
+            "Webhook": "https://hooks.slack.com/services/{{service token}}"
         }
     }
 }

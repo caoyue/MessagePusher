@@ -9,6 +9,6 @@ namespace MessagePusher.Core
     {
         void Config(JToken config);
 
-        Task<Result> Send(List<Message> message);
+        Task<Result> Send(List<Message> messages);
     }
 }

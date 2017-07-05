@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using MessagePusher.Core.Extensions;
 using MessagePusher.Core.Models;
@@ -10,16 +9,14 @@ using Newtonsoft.Json.Linq;
 
 namespace MessagePusher.Core.Sender
 {
-    public class TelegramSender : MessageConfig, IMessageSender
+    public class SlackSender : MessageConfig, IMessageSender
     {
         private static readonly HttpClient Client = new HttpClient();
-        private string _token;
-        private string _chatId;
+        private string _webhook;
 
         public void Config(JToken config)
         {
-            _token = config["Token"].ToString();
-            _chatId = config["ChatId"].ToString();
+            _webhook = config["Webhook"].ToString();
         }
 
         public async Task<Result> Send(List<Message> messages)
@@ -30,13 +27,12 @@ namespace MessagePusher.Core.Sender
                 Message = "Success"
             };
 
-            if (_token.IsNullOrWhiteSpace() || _chatId.IsNullOrWhiteSpace())
+            if (_webhook.IsNullOrWhiteSpace())
             {
                 result.Success = false;
                 result.Message = "config not correct";
                 return result;
             }
-
 
             if (messages == null || !messages.Any())
             {
@@ -45,9 +41,9 @@ namespace MessagePusher.Core.Sender
 
             foreach (var message in messages)
             {
-                var mStr = WebUtility.HtmlEncode($"{ message.Title}\n{message.Desc}");
-                var response = await Client.GetAsync($"https://api.telegram.org/bot{_token}/sendMessage?" +
-                              $"chat_id={_chatId}&text={mStr}");
+                var mStr = $"{message.Title}\n{message.Desc}";
+                var response = await Client.PostAsync(_webhook,
+                    new StringContent($"{{\"text\":\"{mStr}\"}}", Encoding.UTF8, "application/json"));
                 if (!response.IsSuccessStatusCode)
                 {
                     result.Success = false;
