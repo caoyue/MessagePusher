@@ -34,3 +34,4 @@
 *.vcxitems   text eol=lf
 
 *.cs         text eol=lf
+*.json       text eol=lf

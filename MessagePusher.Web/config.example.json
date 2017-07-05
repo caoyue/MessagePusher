@@ -1,5 +1,8 @@
 {
     "Receiver": {
+        "Text": {
+            "SendTo": [ "SendToAlice" ]
+        },
         "GitHub": {
             "Token": "",
             "SendTo": [ "SendToAlice" ]
