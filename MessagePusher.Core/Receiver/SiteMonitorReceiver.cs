@@ -53,7 +53,8 @@ namespace MessagePusher.Core.Receiver
                         _messages.Add(new Message
                         {
                             Title = $"site {site} is back online",
-                            Desc = $"goes offline for {(now - DownTime[site]).TotalMinutes} minutes"
+                            Desc = $"goes offline for {(now - DownTime[site]).TotalMinutes} minutes",
+                            From = Name
                         });
                         DownTime.Remove(site);
                     }
@@ -66,7 +67,8 @@ namespace MessagePusher.Core.Receiver
                         _messages.Add(new Message
                         {
                             Title = $"site {site} is offline.",
-                            Desc = ""
+                            Desc = "",
+                            From = Name
                         });
                     }
                 }

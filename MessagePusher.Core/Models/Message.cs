@@ -5,5 +5,7 @@ namespace MessagePusher.Core.Models
         public string Title { get; set; }
 
         public string Desc { get; set; }
+
+        public string From { get; set; }
     }
 }

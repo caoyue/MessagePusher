@@ -41,7 +41,7 @@ namespace MessagePusher.Core.Sender
 
             foreach (var message in messages)
             {
-                var mStr = $"{message.Title}\n{message.Desc}";
+                var mStr = $"{message.Title}\n{message.Desc} #{message.From}#";
                 var response = await Client.PostAsync(_webhook,
                     new StringContent($"{{\"text\":\"{mStr}\"}}", Encoding.UTF8, "application/json"));
                 if (!response.IsSuccessStatusCode)

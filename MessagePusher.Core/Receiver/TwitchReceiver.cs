@@ -52,7 +52,8 @@ namespace MessagePusher.Core.Receiver
                         var message = new Message
                         {
                             Title = $"{cId}({json["stream"]["channel"]["display_name"]}) start streaming",
-                            Desc = $"{json["stream"]["channel"]["status"]}, {json["stream"]["channel"]["url"]}"
+                            Desc = $"{json["stream"]["channel"]["status"]}, {json["stream"]["channel"]["url"]}",
+                            From = Name
                         };
                         _messages.Add(message);
                         OnlineList.Add(cId);

@@ -65,7 +65,8 @@ namespace MessagePusher.Core.Receiver
                 list.Add(new Message
                 {
                     Title = $"{_json["sender"]["login"]} pinged {_json["repository"]["name"]}",
-                    Desc = "success"
+                    Desc = "success",
+                    From = Name
                 });
                 return list;
             }
@@ -75,7 +76,8 @@ namespace MessagePusher.Core.Receiver
                 list.Add(new Message
                 {
                     Title = $"{_json["head_commit"]["committer"]["name"]} {forced} pushed a commit to {_json["repository"]["name"]}",
-                    Desc = $"{_json["head_commit"]["message"]}, {_json["head_commit"]["url"]}"
+                    Desc = $"{_json["head_commit"]["message"]}, {_json["head_commit"]["url"]}",
+                    From = Name
                 });
                 return list;
             }
@@ -90,11 +92,6 @@ namespace MessagePusher.Core.Receiver
                 builder.AppendFormat("{0:x2}", b);
             }
             return builder.ToString();
-        }
-
-        public void Config(JToken config)
-        {
-            throw new NotImplementedException();
         }
     }
 }

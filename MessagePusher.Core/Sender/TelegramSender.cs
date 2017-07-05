@@ -45,7 +45,7 @@ namespace MessagePusher.Core.Sender
 
             foreach (var message in messages)
             {
-                var mStr = WebUtility.HtmlEncode($"{ message.Title}\n{message.Desc}");
+                var mStr = WebUtility.UrlEncode($"{ message.Title}\n{message.Desc} #{message.From}#");
                 var response = await Client.GetAsync($"https://api.telegram.org/bot{_token}/sendMessage?" +
                               $"chat_id={_chatId}&text={mStr}");
                 if (!response.IsSuccessStatusCode)

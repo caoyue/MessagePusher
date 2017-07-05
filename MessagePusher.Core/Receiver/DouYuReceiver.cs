@@ -52,7 +52,8 @@ namespace MessagePusher.Core.Receiver
                         var message = new Message
                         {
                             Title = $"{json["data"]["owner_name"]} start streaming",
-                            Desc = $"{json["data"]["room_name"]}"
+                            Desc = $"{json["data"]["room_name"]}",
+                            From = Name
                         };
                         _messages.Add(message);
                         OnlineList.Add(rId);
