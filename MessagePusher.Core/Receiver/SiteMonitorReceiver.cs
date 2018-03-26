@@ -48,14 +48,23 @@ namespace MessagePusher.Core.Receiver
 
                 if (success && r != null && r.IsSuccessStatusCode)
                 {
+                    //TODO: set d value in config
+                    const int THRESHOLD = 10;
+
                     if (DownTime.ContainsKey(site))
                     {
-                        _messages.Add(new Message
+                        var d = Math.Round((now - DownTime[site]).TotalMinutes, 1);
+
+                        // only notify if site down more than THRESHOLD minutes
+                        if (d > THRESHOLD) 
                         {
-                            Title = $"site {site} is back online",
-                            Desc = $"goes offline for {(now - DownTime[site]).TotalMinutes} minutes",
-                            From = Name
-                        });
+                            _messages.Add(new Message
+                            {
+                                Title = $"site {site} is back online",
+                                Desc = $"goes offline for {d} minutes",
+                                From = Name
+                            });
+                        }
                         DownTime.Remove(site);
                     }
                 }
