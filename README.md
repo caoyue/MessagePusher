@@ -20,14 +20,7 @@ a dotnet core application for webhooks
     `doc/supervisor.conf`
 
 ### run with docker
-- build image
-    ```bash
-    docker build -t message_pusher .
-    ```
-- run container
-    ```bash
-    docker run --name message_push_server -p 8001:8001 -v /home/MessagePusher/publish:/app -d message_pusher
-    ```
+- ```docker-compose up -d```
     
 ### usage
 - reload config file without restart app
@@ -91,7 +84,7 @@ a dotnet core application for webhooks
         ```
     + cronjob
         ```
-        */5 * * * * curl http://{your_host}:8001/api/douyu >/dev/null 2>&1
+        */5 * * * * curl http://{your_host}:8001/api/sitemonitor >/dev/null 2>&1
         ```
 - twitch stream notification
     + config

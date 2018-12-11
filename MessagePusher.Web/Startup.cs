@@ -8,38 +8,27 @@ namespace MessagePusher.Web
 {
     public class Startup
     {
-        //public Startup(IHostingEnvironment env)
-        //{
-        //    var builder = new ConfigurationBuilder()
-        //        .SetBasePath(env.ContentRootPath)
-        //        .AddJsonFile("appsettings.json", false, true)
-        //        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
-        //        .AddEnvironmentVariables();
-        //    Configuration = builder.Build();
-        //}
+        private readonly ILogger _logger;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            loggerFactory.AddFile("message_pusher_{Date}.log");
-
             env.EnvironmentName = EnvironmentName.Production;
             if (env.IsDevelopment())
             {
+                _logger.LogInformation("In Development environment");
                 app.UseDeveloperExceptionPage();
             }
 

@@ -56,7 +56,7 @@ namespace MessagePusher.Core.Receiver
                         var d = Math.Round((now - DownTime[site]).TotalMinutes, 1);
 
                         // only notify if site down more than THRESHOLD minutes
-                        if (d > THRESHOLD) 
+                        if (d > THRESHOLD)
                         {
                             _messages.Add(new Message
                             {
